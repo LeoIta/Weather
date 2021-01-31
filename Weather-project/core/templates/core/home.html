@@ -6,10 +6,11 @@
         {% csrf_token %}
         <div class="field has-addons">
             <div class="control is-expanded">
+                Select your city<br>
                 {{ form.name }}
             </div>
             <div class="control">
-                <button class="button is-info">Add City</button>
+                <button class="button is-info">Confirm</button>
             </div>
         </div>
     </form>
@@ -30,12 +31,8 @@
             <hr>
             <div class="card-footer bg-transparent border-dark">
                 <p class="card-title">{{book.author}}</p>
-                <a href="{{weather.link}}"  target= "_blank" class="btn btn-info"
-                    id = '{{weather.id}}'>more details</a>
-                <form class="btn btn-warning" style='display: none;' method="POST"
-                    action="{% url 'deleteCity' weather.city %}">
-                    {% csrf_token %}
-                    <button id="delete" type="submit">Complete</button>
+                <a href="{{weather.link}}"  target= "_blank" class="btn btn-info">more details</a>
+                    <button  class="btn btn-danger" type="submit">Remove</button>
                 </form>
             </div>
         </div>

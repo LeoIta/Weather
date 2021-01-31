@@ -2,10 +2,6 @@ from django.db import models
 
 class City(models.Model):
     name = models.CharField(max_length=25, unique=True)
-    description = models.CharField(max_length=50,null=True,blank=True )
-    temperature = models.IntegerField(null=True,blank=True)
-    feeling = models.IntegerField(null=True,blank=True)
-    wind = models.IntegerField(null=True,blank=True)
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self): #show the actual city name

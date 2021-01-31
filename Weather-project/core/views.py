@@ -8,7 +8,7 @@ from .forms import CityForm
 def home(request):
     form = CityForm()
     if request.method == 'POST':
-        city = CityForm(request.POST,request.FILES)
+        form = CityForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
     cities = City.objects.all()
@@ -16,7 +16,7 @@ def home(request):
 
     for city in cities:
         link = getLink(city.name)
-        weather = getDetail(link)
+        weather = myTemperature(link)
         weather_data.append(weather)
     return render(request, 'core/home.html', {'weather_data' : weather_data, 'form' : form}) 
 
@@ -31,10 +31,10 @@ def getLink(city):
         urlPath = location["urlPath"]
         linkOut = "https://www.yr.no/en/forecast/daily-table/" + id + "/" + urlPath
     except:
-        pass
+        linkOut = "City not found, please check the spelling"
     return linkOut
 
-def getDetail(link):
+def myTemperature(link):
     web = requests.get(link)
     city = link.split("/")[-1].replace("%20"," ")
     soup = BeautifulSoup(web.content, 'html.parser')
