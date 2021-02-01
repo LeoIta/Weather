@@ -44,20 +44,22 @@ def logoutUser(request):
     logout(request)
     return redirect('home')
 
+@login_required
 def weather(request):
     form = CityForm()
     if request.method == 'POST':
-        form = CityForm(request.POST,request.FILES)
-        if form.is_valid():
-            form.save()
-    cities = City.objects.all()
+        form = CityForm(request.POST)
+        newCity = form.save(commit=False)
+        newCity.user = request.user 
+        newCity.save()
+    cities = City.objects.filter(user=request.user)
     weather_data = []
 
     for city in cities:
         link = getLink(city.name)
         weather = myTemperature(link)
         weather_data.append(weather)
-    return render(request, 'core/home.html', {'weather_data' : weather_data, 'form' : form}) 
+    return render(request, 'core/weather.html', {'weather_data' : weather_data, 'form' : CityForm()}) 
 
 
 def getLink(city):
