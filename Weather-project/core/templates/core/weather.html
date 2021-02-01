@@ -1,0 +1,48 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<!-- <div class="container align-center">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="field has-addons">
+            <div class="control is-expanded">
+                Select your city<br>
+                {{ form.name }}
+            </div>
+            <div class="control">
+                <button class="button is-info">Confirm</button>
+            </div>
+        </div>
+    </form>
+</div>
+    
+<div class="card-columns">
+    {% for weather in weather_data %}
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="../../static/core/logo.png">
+        <div class="card-body">
+            <h5 class="card-title">{{ weather.city }}</h5>
+            <hr>
+            <p class="card-text"> {{weather.weather}}</p>
+            <p class="card-text">Temperature: {{weather.temp}}</p>
+            <p class="card-text">Feels like: {{weather.tempFeel}}</p>
+            <p class="card-text">Precipitation: {{weather.precipitation}}mm</p>
+            <p class="card-text">{{weather.wind}}</p>
+            <hr>
+            <div class="card-footer bg-transparent border-dark">
+                <p class="card-title">{{book.author}}</p>
+                <a href="{{weather.link}}"  target= "_blank" class="btn btn-info">more details</a>
+                    <button  class="btn btn-danger" type="submit">Remove</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous">
+</script> -->
+
+{% endblock %}

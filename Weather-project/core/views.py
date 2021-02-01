@@ -4,8 +4,47 @@ import requests
 import json
 from .models import City
 from .forms import CityForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 
 def home(request):
+    return render(request, 'core/home.html')
+
+def signUpUser(request):
+    if request.method == 'GET':
+        return render(request, 'core/signUpUser.html', {'form':UserCreationForm()})
+    else:
+        if request.POST['password1'] == request.POST['password2']:
+            try:
+                user = User.objects.create_user(request.POST['username'], password=request.POST['password1'])
+                user.save()
+                login(request, user)
+                return redirect('home')
+            except IntegrityError:
+                return render(request, 'core/signUpUser.html', {'form':UserCreationForm(), 'error':'Username already in use. Please choose another username'})
+        else:
+            return render(request, 'core/signupUser.html', {'form':UserCreationForm(), 'error':'Passwords did not match'})
+
+def loginUser(request):
+    if request.method == 'GET':
+        return render(request, 'core/loginUser.html', {'form':AuthenticationForm()})
+    else:
+        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
+        if user is None:
+            return render(request, 'core/loginUser.html', {'form':AuthenticationForm(), 'error':'Username or password incorrect'})
+        else:
+            login(request, user)
+            return redirect('home')
+
+@login_required
+def logoutUser(request):
+    logout(request)
+    return redirect('home')
+
+def weather(request):
     form = CityForm()
     if request.method == 'POST':
         form = CityForm(request.POST,request.FILES)
@@ -19,6 +58,7 @@ def home(request):
         weather = myTemperature(link)
         weather_data.append(weather)
     return render(request, 'core/home.html', {'weather_data' : weather_data, 'form' : form}) 
+
 
 def getLink(city):
     try:    
