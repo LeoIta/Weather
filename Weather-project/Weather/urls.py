@@ -26,5 +26,7 @@ urlpatterns = [
     path('login/', views.loginUser, name='loginUser'),
     path('logout/', views.logoutUser, name='logoutUser'),
     #weather page
-    path('weather/', views.weather, name= 'weather'),
+    path('weather/current', views.current, name= 'current'),
+    path('weather/newcity', views.addNewCity, name= 'newcity'),
+
 ]

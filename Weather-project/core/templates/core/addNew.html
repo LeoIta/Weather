@@ -1,0 +1,45 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+{% if city_list %}
+<div class="col-md-5 text-center"
+style=
+    "display: inline-block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 500px;
+    height: 100px;
+    margin: auto;">
+    <h3>Which city do you want to add?</h3><hr>
+    {% for city in city_list %}
+    <ul><a href="{ url '' city.id}">{{city.name}}, {{city.region}} [{{city.country}}] </a></ul>
+    {%endfor %}
+    <ul><a href="newcity">None of the above</a></ul>
+{% else %}
+<div class="col-md-5"
+style=
+    "display: inline-block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 200px;
+    height: 100px;
+    margin: auto;">
+    <form method="POST" style="size: 500px;">
+        {% csrf_token %}
+       <strong>{{ error }}</strong> 
+<br><br>
+        Search your city
+        {{ form.name }}
+        <button class="button is-info">Add to my cities</button>
+    </form> 
+
+{% endif %}
+
+</div>
+{% endblock %}

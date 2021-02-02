@@ -45,16 +45,9 @@ def logoutUser(request):
     return redirect('home')
 
 @login_required
-def weather(request):
-    form = CityForm()
-    if request.method == 'POST':
-        form = CityForm(request.POST)
-        newCity = form.save(commit=False)
-        newCity.user = request.user 
-        newCity.save()
+def current(request):
     cities = City.objects.filter(user=request.user)
     weather_data = []
-
     for city in cities:
         link = getLink(city.name)
         weather = myTemperature(link)
@@ -88,3 +81,55 @@ def myTemperature(link):
     info = {"city":city, 'weather':weather, "temp":temp[0].text, 'tempFeel':temp[1].text, 
             "precipitation":precipitation,"wind":wind,"link":link}
     return  info
+
+def findCityOptions(newcity):
+    linkJson = "https://www.yr.no/api/v0/locations/suggest?language=en&q=" + newcity
+    web = requests.get(linkJson)
+    jsonfile = json.loads(web.text)
+    results = jsonfile["totalResults"]
+    info_list = []
+    if results!=0:
+        locations = jsonfile["_embedded"]["location"]
+        for location in locations:
+            name = location["name"]
+            country = location["country"]["name"]
+            countryId = location["country"]["id"]
+            nameId = location["id"]
+            urlPath = location["urlPath"]
+            try:
+                category = location["category"]["name"]
+            except:
+                category = ''
+            try:
+                region = location["region"]["name"]
+            except:
+                region = ''
+            try:
+                subregion = location["subregion"]["name"]
+            except:
+                subregion = ''
+            info = {'name':name, 'nameId':nameId, 'category':category,'urlPath':urlPath,'subregion':subregion,'region':region,'country':country,'countryId':countryId }
+            info_list.append(info)
+    return info_list
+
+def addNewCity(request):
+    form = CityForm()
+    cities = City.objects.filter(user=request.user)
+    weather_data = []
+    city_list = []
+    error = ''
+    for city in cities:
+        link = getLink(city.name)
+        weather = myTemperature(link)
+        weather_data.append(weather)
+    if request.method == 'POST':
+        form = CityForm(request.POST)
+        newcity = form.save(commit=False)
+        city_name = newcity.name
+        city_list = findCityOptions(newcity.name)
+        if (len(city_list)==0):
+            error = 'please enter a valid city'     
+    return render(request, 'core/addNew.html', {'weather_data' : weather_data, 'form' : CityForm(), 'city_list': city_list, 'error': error}) 
+
+
+
