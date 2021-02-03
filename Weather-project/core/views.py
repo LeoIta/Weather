@@ -49,7 +49,7 @@ def current(request):
     cities = City.objects.filter(user=request.user)
     weather_data = []
     for city in cities:
-        link = getLink(city.name)
+        link = getLink(city.cityName)
         weather = myTemperature(link)
         weather_data.append(weather)
     return render(request, 'core/weather.html', {'weather_data' : weather_data, 'form' : CityForm()}) 
@@ -91,45 +91,67 @@ def findCityOptions(newcity):
     if results!=0:
         locations = jsonfile["_embedded"]["location"]
         for location in locations:
-            name = location["name"]
+            cityName = location["name"]
+            cityId = location["id"]
             country = location["country"]["name"]
-            countryId = location["country"]["id"]
-            nameId = location["id"]
+            countryId = location["country"]["id"] #short like PL for Poland
             urlPath = location["urlPath"]
-            try:
-                category = location["category"]["name"]
-            except:
-                category = ''
             try:
                 region = location["region"]["name"]
             except:
                 region = ''
-            try:
-                subregion = location["subregion"]["name"]
-            except:
-                subregion = ''
-            info = {'name':name, 'nameId':nameId, 'category':category,'urlPath':urlPath,'subregion':subregion,'region':region,'country':country,'countryId':countryId }
+            info = {
+                'name':cityName,
+                'cityId':cityId,
+                'urlPath':urlPath,
+                'region':region,
+                'country':country,
+                'countryId':countryId
+                }
             info_list.append(info)
     return info_list
 
-def addNewCity(request):
-    form = CityForm()
-    cities = City.objects.filter(user=request.user)
-    weather_data = []
-    city_list = []
+def apiValidation(request):
     error = ''
-    for city in cities:
-        link = getLink(city.name)
-        weather = myTemperature(link)
-        weather_data.append(weather)
+    city_list = []
     if request.method == 'POST':
         form = CityForm(request.POST)
         newcity = form.save(commit=False)
-        city_name = newcity.name
-        city_list = findCityOptions(newcity.name)
+        city_name = newcity.cityName
+        city_list = findCityOptions(city_name)
         if (len(city_list)==0):
-            error = 'please enter a valid city'     
-    return render(request, 'core/addNew.html', {'weather_data' : weather_data, 'form' : CityForm(), 'city_list': city_list, 'error': error}) 
+            error = 'please enter a valid city'
+    return render(request, 'core/addNew.html', {'form' : CityForm(), 'city_list': city_list, 'error': error})
 
-
-
+def validateInDB(request,id):
+    linkJson = "https://www.yr.no/api/v0/locations/" + id
+    web = requests.get(linkJson)
+    location = json.loads(web.text)
+    cityName = location["name"]
+    country = location["country"]["name"]
+    countryId = location["country"]["id"] #short like PL for Poland
+    cityId = location["id"]
+    urlPath = location["urlPath"]
+    try:
+        category = location["category"]["name"]
+    except:
+        category = ''
+    try:
+        region = location["region"]["name"]
+    except:
+        region = ''
+    
+    newcity = City()
+    newcity.cityName = cityName
+    newcity.cityId = cityId
+    newcity.country = country
+    newcity.countryId = countryId
+    newcity.urlPath = urlPath
+    newcity.user = request.user
+    try:
+        newcity.save()
+        return redirect('current')
+    except IntegrityError:
+        return render(request, 'core/addNew.html', {'form' : CityForm(), 'error': 'double city'})
+        
+    

@@ -27,6 +27,9 @@ urlpatterns = [
     path('logout/', views.logoutUser, name='logoutUser'),
     #weather page
     path('weather/current', views.current, name= 'current'),
-    path('weather/newcity', views.addNewCity, name= 'newcity'),
+    path('weather/cities/', views.apiValidation, name= 'cities'),
+    path('weather/cities/<str:id>', views.validateInDB, name= 'validateInDB'),
+    path('weather/<str:id>/error', views.validateInDB, name= 'validateInDB'),
+
 
 ]

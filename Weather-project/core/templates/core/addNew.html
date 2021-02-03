@@ -15,9 +15,9 @@ style=
     margin: auto;">
     <h3>Which city do you want to add?</h3><hr>
     {% for city in city_list %}
-    <ul><a href="{ url '' city.id}">{{city.name}}, {{city.region}} [{{city.country}}] </a></ul>
+    <ul><a href="{{city.cityId}}">{{city.name}}, {{city.region}} [{{city.country}}] </a></ul>
     {%endfor %}
-    <ul><a href="newcity">None of the above</a></ul>
+    <ul><a href="cities">None of the above</a></ul>
 {% else %}
 <div class="col-md-5"
 style=
@@ -32,10 +32,10 @@ style=
     margin: auto;">
     <form method="POST" style="size: 500px;">
         {% csrf_token %}
-       <strong>{{ error }}</strong> 
+        <strong>{{ error }}</strong> 
 <br><br>
         Search your city
-        {{ form.name }}
+        {{ form.cityName }}
         <button class="button is-info">Add to my cities</button>
     </form> 
 
