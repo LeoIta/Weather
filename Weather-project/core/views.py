@@ -2,7 +2,6 @@ from django.shortcuts import render, get_object_or_404,redirect
 from bs4 import BeautifulSoup
 import requests
 import json
-import models
 from .models import City
 from .forms import CityForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -75,29 +74,33 @@ def weekly(request):
         weather_data.append(weather)
     return render(request, 'core/daily.html', {'weather_data' : weather_data}) 
 
-def getWind(id, ref):
+def getConWin(id, ref):
     link = "https://www.yr.no/en/forecast/daily-table/" + id + "/" + ref
     web = requests.get(link)
     soup = BeautifulSoup(web.content, 'html.parser')
     act = soup.find_all('div',{"class":"now-hero__next-hour-text"})
     wind = act[2].find_all('span',{"nrk-sr"})[1].text
-    return wind
+    details = soup.find_all('div',{"class":"now-hero__next-hour-symbol"})
+    condition = details[0].find_all('span',{"nrk-sr"})[0].text
+    conWin={}
+    conWin={'wind':wind,'condition':condition}
+    return conWin
 
 def getDaily(id,urlPath):
     linkJson = 'https://www.yr.no/api/v0/locations/' + id + '/forecast/currenthour'
     web = requests.get(linkJson)
     content = json.loads(web.text)
-    condition = content["symbolCode"]['next1Hour']
     temp = content["temperature"]["value"]
     feel = content["temperature"]["feelsLike"]
     precipitation = content["precipitation"]["value"]
-    wind = getWind(id,urlPath)
+    wind = getConWin(id,urlPath)['wind']
+    condition = getConWin(id,urlPath)['condition']
     info = {
-        'condition':condition,
         'temp':temp,
         'feel':feel,
         'precipitation':precipitation,
         'wind':wind,
+        'condition':condition,
         }
     return info
 
