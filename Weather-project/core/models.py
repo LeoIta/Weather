@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-
 class City(models.Model):
     cityName = models.CharField(max_length=85)
     #longest city in the word has 85 characthers

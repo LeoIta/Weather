@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404,redirect
 from bs4 import BeautifulSoup
 import requests
 import json
+import models
 from .models import City
 from .forms import CityForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -45,7 +46,7 @@ def logoutUser(request):
     return redirect('home')
 
 @login_required
-def current(request):
+def daily(request):
     cities = City.objects.filter(user=request.user)
     weather_data = []
     for city in cities:
@@ -57,7 +58,22 @@ def current(request):
         weather['link']= link
         weather['id']=city.cityId
         weather_data.append(weather)
-    return render(request, 'core/weather.html', {'weather_data' : weather_data}) 
+    return render(request, 'core/daily.html', {'weather_data' : weather_data}) 
+
+@login_required
+def weekly(request):
+    cities = City.objects.filter(user=request.user)
+    weather_data = []
+    for city in cities:
+        weather = getDaily(city.cityId,city.urlPath)
+        weather['code']= (city.countryId).lower()
+        weather['name']= city.cityName
+        weather['country']= city.country
+        link = "https://www.yr.no/en/forecast/daily-table/" + city.cityId + "/" + city.urlPath
+        weather['link']= link
+        weather['id']=city.cityId
+        weather_data.append(weather)
+    return render(request, 'core/daily.html', {'weather_data' : weather_data}) 
 
 def getWind(id, ref):
     link = "https://www.yr.no/en/forecast/daily-table/" + id + "/" + ref
