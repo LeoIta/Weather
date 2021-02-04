@@ -156,7 +156,8 @@ def validateInDB(request,id):
         return redirect('daily')
     except IntegrityError:
         return redirect('daily')
-        
+
+@login_required   
 def deleteRecord(request,id):
     cities = City.objects.filter(user=request.user)
     city = cities.filter(cityId = id)
