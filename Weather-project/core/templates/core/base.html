@@ -36,16 +36,15 @@
                 {% endif %}
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    <a class="nav-link" href="{% url 'cities' %}">Search new city</a>
                 </li>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Weather</a>
+                    Your cities</a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'cities' %}">search city</a></li>
-                        <li><a class="dropdown-item" href="{% url 'daily' %}">daily</a></li>
-                        <li><a class="dropdown-item" href="{% url 'weekly' %}">weekly</a></li>
+                        <li><a class="dropdown-item" href="{% url 'daily' %}">daily weather</a></li>
+                        <li><a class="dropdown-item" href="{% url 'weekly' %}">weekly weather</a></li>
                     </ul>
                 </li>
             </ul>

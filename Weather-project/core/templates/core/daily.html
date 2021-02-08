@@ -5,17 +5,20 @@
 <div class="card-columns">
     {% for weather in weather_data %}
     <ul>
-    <div class="card" style="width: 30rem;">
+    <div class="card" style="width: 35rem;">
         
         <div class="card-body">
-            <class="card-title" style="align-items: center">{{ weather.name }}, {{ weather.country }}&emsp;<img
+            <class="card-title" style="align-items: center">{{ weather.name }}, {{ weather.country }}
+            &emsp;<img
             src="https://flagcdn.com/w20/{{ weather.code }}.png"
             srcset="https://flagcdn.com/w40/{{ weather.code }}.png 2x"
             width="20"></h5>
+            &emsp; {{ weather.hour }}
+
             <hr>
             <class="card-text">
-            {{weather.condition}}&emsp;
-            <img src="../../static/core/term.png" height="30px">{{weather.temp}} 
+            <img src="../../static/core/{{ weather.conditionSymbol}}.png" height="30px"> {{weather.condition}}
+            &emsp;<img src="../../static/core/term.png" height="30px"> {{weather.temp}} 
             &emsp;Feels like: {{weather.feel}}
             &emsp;<img src="../../static/core/prec.png" height="25px"> {{weather.precipitation}}mm</p>
             <p class="card-text"><img src="../../static/core/wind.png" height="30px"> {{weather.wind}}</p>

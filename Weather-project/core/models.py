@@ -9,6 +9,7 @@ class City(models.Model):
     countryId = models.CharField(max_length=25)
     urlPath = models.CharField(max_length=250)
     region = models.CharField(max_length=25)
+    timezone = models.CharField(max_length=50)
     created = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

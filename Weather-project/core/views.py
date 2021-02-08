@@ -9,6 +9,8 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from datetime import datetime 
+import pytz
 
 def home(request):
     return render(request, 'core/home.html')
@@ -49,87 +51,82 @@ def daily(request):
     cities = City.objects.filter(user=request.user)
     weather_data = []
     for city in cities:
-        weather = getDaily(city.cityId,city.urlPath)
-        weather['code']= (city.countryId).lower()
-        weather['name']= city.cityName
-        weather['country']= city.country
-        link = "https://www.yr.no/en/forecast/daily-table/" + city.cityId + "/" + city.urlPath
-        weather['link']= link
-        weather['id']=city.cityId
+        weather = getDaily(city)
+        # weather = getDaily(city.cityId,city.urlPath)
+        # link = "https://www.yr.no/en/forecast/daily-table/" + city.cityId + "/" + city.urlPath
+        # weather['link']= link
         weather_data.append(weather)
-    return render(request, 'core/daily.html', {'weather_data' : weather_data}) 
+    return render(request, 'core/daily.html', {'weather_data' : weather_data})
 
-@login_required
-def weekly(request):
-    cities = City.objects.filter(user=request.user)
-    weather_data = []
-    for city in cities:
-        weather = getDaily(city.cityId,city.urlPath)
-        weather['code']= (city.countryId).lower()
-        weather['name']= city.cityName
-        weather['country']= city.country
-        link = "https://www.yr.no/en/forecast/daily-table/" + city.cityId + "/" + city.urlPath
-        weather['link']= link
-        weather['id']=city.cityId
-        weather_data.append(weather)
-    return render(request, 'core/daily.html', {'weather_data' : weather_data}) 
-
-def getConWin(id, ref):
+def getWind(id, ref):
     link = "https://www.yr.no/en/forecast/daily-table/" + id + "/" + ref
     web = requests.get(link)
     soup = BeautifulSoup(web.content, 'html.parser')
     act = soup.find_all('div',{"class":"now-hero__next-hour-text"})
     wind = act[2].find_all('span',{"nrk-sr"})[1].text
-    details = soup.find_all('div',{"class":"now-hero__next-hour-symbol"})
-    condition = details[0].find_all('span',{"nrk-sr"})[0].text
-    conWin={}
-    conWin={'wind':wind,'condition':condition}
-    return conWin
+    # details = soup.find_all('div',{"class":"now-hero__next-hour-symbol"})
+    # condition = details[0].find_all('span',{"nrk-sr"})[0].text
+    # wind
+    return wind
 
-def getDaily(id,urlPath):
-    linkJson = 'https://www.yr.no/api/v0/locations/' + id + '/forecast/currenthour'
-    web = requests.get(linkJson)
+def cleanCondition(str):
+    str = str.replace('_day','')
+    str = str.replace('_night','')
+    if str[:6]=='partly':
+        str = str[:6] + ' ' + str[6:]
+    elif str[-13:]=='thunderstorms':
+        str = str[:-13] + ' ' + str[-13:]
+    elif str[-7:]=='showers':
+        str = str[:-7] + ' '  + str[-7:]
+    if str[:5] in ('heavy','light','clear'):
+            str = str[:5] +  ' ' + str[5:]
+    return str
+
+def hour(timezone):
+    time = pytz.timezone(timezone)
+    currentTime = datetime.now(time)
+    timezone = timezone.replace('_',' ')
+    hour = currentTime.strftime('%H:%M %Z') + ' (' + timezone + ')'
+    return hour
+
+def getDaily(city):
+    weather = {}
+    weather['link'] = 'https://www.yr.no/en/forecast/daily-table/' + city.cityId + '/' + city.urlPath
+    weather['id']=city.cityId
+    weather['name']= city.cityName
+    weather['country']= city.country
+    weather['code']= (city.countryId).lower()
+    weather['hour'] = hour(city.timezone)
+    
+    link = 'https://www.yr.no/api/v0/locations/' + city.cityId + '/forecast/currenthour'
+    web = requests.get(link)
     content = json.loads(web.text)
-    temp = content["temperature"]["value"]
-    feel = content["temperature"]["feelsLike"]
-    precipitation = content["precipitation"]["value"]
-    wind = getConWin(id,urlPath)['wind']
-    condition = getConWin(id,urlPath)['condition']
-    info = {
-        'temp':temp,
-        'feel':feel,
-        'precipitation':precipitation,
-        'wind':wind,
-        'condition':condition,
-        }
-    return info
+    weather['wind']= getWind(city.cityId,city.urlPath)
+    weather['temp']= content["temperature"]["value"]
+    weather['feel']= content["temperature"]["feelsLike"]
+    weather['precipitation']= content["precipitation"]["value"]
+    weather['conditionSymbol']= content["symbolCode"]["next1Hour"]
+    weather['condition'] = cleanCondition(content["symbolCode"]["next1Hour"])
+
+    return weather
 
 def findCityOptions(newcity):
-    linkJson = "https://www.yr.no/api/v0/locations/suggest?language=en&q=" + newcity
+    linkJson = 'https://www.yr.no/api/v0/locations/suggest?language=en&q=' + newcity
     web = requests.get(linkJson)
     jsonfile = json.loads(web.text)
-    results = jsonfile["totalResults"]
+    results = jsonfile['totalResults']
     info_list = []
     if results!=0:
-        locations = jsonfile["_embedded"]["location"]
+        locations = jsonfile['_embedded']['location']
         for location in locations:
-            cityName = location["name"]
-            cityId = location["id"]
-            country = location["country"]["name"]
-            countryId = location["country"]["id"] #short like PL for Poland
-            urlPath = location["urlPath"]
+            info= {}
+            info['name'] = location['name']
+            info['cityId'] = location['id']
+            info['country'] = location['country']['name']
             try:
-                region = location["region"]["name"]
+                info['region'] = location['region']['name']
             except:
-                region = ''
-            info = {
-                'name':cityName,
-                'cityId':cityId,
-                'urlPath':urlPath,
-                'region':region,
-                'country':country,
-                'countryId':countryId
-                }
+                info['region'] = ''
             info_list.append(info)
     return info_list
 
@@ -149,26 +146,17 @@ def validateInDB(request,id):
     linkJson = "https://www.yr.no/api/v0/locations/" + id
     web = requests.get(linkJson)
     location = json.loads(web.text)
-    cityName = location["name"]
-    country = location["country"]["name"]
-    countryId = location["country"]["id"] #short like PL for Poland
-    cityId = location["id"]
-    urlPath = location["urlPath"]
-    try:
-        category = location["category"]["name"]
-    except:
-        category = ''
-    try:
-        region = location["region"]["name"]
-    except:
-        region = ''
-    
     newcity = City()
-    newcity.cityName = cityName
-    newcity.cityId = cityId
-    newcity.country = country
-    newcity.countryId = countryId
-    newcity.urlPath = urlPath
+    newcity.cityName = location["name"]
+    newcity.country = location["country"]["name"]
+    newcity.countryId = location["country"]["id"] #short like PL for Poland
+    newcity.cityId = location["id"]
+    newcity.urlPath = location["urlPath"]
+    newcity.timezone = location["timeZone"]
+    try:
+        newcity.region = location["region"]["name"]
+    except:
+        newcity.region = '' 
     newcity.user = request.user
     try:
         newcity.save()
@@ -182,3 +170,18 @@ def deleteRecord(request,id):
     city = cities.filter(cityId = id)
     city.delete()
     return redirect('daily')
+
+@login_required
+def weekly(request):
+    cities = City.objects.filter(user=request.user)
+    weather_data = []
+    for city in cities:
+        weather = getDaily(city.cityId,city.urlPath)
+        weather['code']= (city.countryId).lower()
+        weather['name']= city.cityName
+        weather['country']= city.country
+        link = "https://www.yr.no/en/forecast/daily-table/" + city.cityId + "/" + city.urlPath
+        weather['link']= link
+        weather['id']=city.cityId
+        weather_data.append(weather)
+    return render(request, 'core/daily.html', {'weather_data' : weather_data}) 
