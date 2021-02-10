@@ -11,5 +11,5 @@ urlpatterns = [
     path('login/', views.loginUser, name='loginUser'),
     path('logout/', views.logoutUser, name='logoutUser'),
     #weather page
-    path('weather',include('core.urls')),
+    path('weather/',include('core.urls')),
 ]

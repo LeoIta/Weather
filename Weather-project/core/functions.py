@@ -32,7 +32,7 @@ def hour(timezone):
     hour = currentTime.strftime('%H:%M %Z') + ' (' + timezone + ')'
     return hour
 
-def getDaily(city):
+def getCurrent(city):
     weather = {}
     weather['link'] = 'https://www.yr.no/en/forecast/daily-table/' + city.cityId + '/' + city.urlPath
     weather['id']=city.cityId

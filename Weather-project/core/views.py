@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from .functions import getWind,cleanCondition,hour,getDaily,findCityOptions,dayIntervals
+from .functions import getWind,cleanCondition,hour,getCurrent,findCityOptions,dayIntervals
 
 def home(request):
     return render(request, 'core/home.html')
@@ -45,16 +45,13 @@ def logoutUser(request):
     return redirect('home')
 
 @login_required
-def daily(request):
+def current(request):
     cities = City.objects.filter(user=request.user)
     weather_data = []
     for city in cities:
-        weather = getDaily(city)
-        # weather = getDaily(city.cityId,city.urlPath)
-        # link = "https://www.yr.no/en/forecast/daily-table/" + city.cityId + "/" + city.urlPath
-        # weather['link']= link
+        weather = getCurrent(city)
         weather_data.append(weather)
-    return render(request, 'core/daily.html', {'weather_data' : weather_data})
+    return render(request, 'core/current.html', {'weather_data' : weather_data})
 
 @login_required
 def apiValidation(request):
@@ -88,28 +85,22 @@ def validateInDB(request,id):
     newcity.user = request.user
     try:
         newcity.save()
-        return redirect('daily')
+        return redirect('current')
     except IntegrityError:
-        return redirect('daily')
+        return redirect('current')
 
 @login_required
 def weekly(request):
     cities = City.objects.filter(user=request.user)
     weather_data = []
     for city in cities:
-        weather = getDaily(city.cityId,city.urlPath)
-        weather['code']= (city.countryId).lower()
-        weather['name']= city.cityName
-        weather['country']= city.country
-        link = "https://www.yr.no/en/forecast/daily-table/" + city.cityId + "/" + city.urlPath
-        weather['link']= link
-        weather['id']=city.cityId
+        weather = getCurrent(city)
         weather_data.append(weather)
-    return render(request, 'core/daily.html', {'weather_data' : weather_data}) 
+    return render(request, 'core/current.html', {'weather_data' : weather_data})
 
 @login_required   
 def deleteRecord(request,id):
     cities = City.objects.filter(user=request.user)
     city = cities.filter(cityId = id)
     city.delete()
-    return redirect('daily')
+    return redirect('current')
