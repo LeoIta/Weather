@@ -1,16 +1,14 @@
 from django.shortcuts import render, get_object_or_404,redirect
-from bs4 import BeautifulSoup
-import requests
-import json
 from .models import City
 from .forms import CityForm
+import requests
+import json
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from datetime import datetime 
-import pytz
+from .functions import getWind,cleanCondition,hour,getDaily,findCityOptions,dayIntervals
 
 def home(request):
     return render(request, 'core/home.html')
@@ -58,13 +56,41 @@ def daily(request):
         weather_data.append(weather)
     return render(request, 'core/daily.html', {'weather_data' : weather_data})
 
+@login_required
+def apiValidation(request):
+    error = ''
+    city_list = []
+    if request.method == 'POST':
+        form = CityForm(request.POST)
+        newcity = form.save(commit=False)
+        city_name = newcity.cityName
+        city_list = findCityOptions(city_name)
+        if (len(city_list)==0):
+            error = 'please enter a valid city'
+    return render(request, 'core/addNew.html', {'form' : CityForm(), 'city_list': city_list, 'error': error})
 
-@login_required   
-def deleteRecord(request,id):
-    cities = City.objects.filter(user=request.user)
-    city = cities.filter(cityId = id)
-    city.delete()
-    return redirect('daily')
+@login_required
+def validateInDB(request,id):
+    linkJson = "https://www.yr.no/api/v0/locations/" + id
+    web = requests.get(linkJson)
+    location = json.loads(web.text)
+    newcity = City()
+    newcity.cityName = location["name"]
+    newcity.country = location["country"]["name"]
+    newcity.countryId = location["country"]["id"] #short like PL for Poland
+    newcity.cityId = location["id"]
+    newcity.urlPath = location["urlPath"]
+    newcity.timezone = location["timeZone"]
+    try:
+        newcity.region = location["region"]["name"]
+    except:
+        newcity.region = '' 
+    newcity.user = request.user
+    try:
+        newcity.save()
+        return redirect('daily')
+    except IntegrityError:
+        return redirect('daily')
 
 @login_required
 def weekly(request):
@@ -81,26 +107,9 @@ def weekly(request):
         weather_data.append(weather)
     return render(request, 'core/daily.html', {'weather_data' : weather_data}) 
 
-def dayIntervals(request,id):
-    links = 'https://www.yr.no/api/v0/locations/' + id + '/forecast'
-    web = requests.get(links)
-    content = json.loads(web.text)
-    dayInterval = []
-    for i in range(9):
-        day = {}
-        start =(content['dayIntervals'][i]['start'])[:10]
-        if i==0:
-            day['data'] = datetime.strptime(start, '%Y-%m-%d').strftime('%A, %b. %d')
-        else:
-            day['data'] = datetime.strptime(start, '%Y-%m-%d').strftime('Today, %b. %d')
-        day['night'] = content['dayIntervals'][i]['sixHourSymbols'][0]
-        day['morning'] = content['dayIntervals'][i]['sixHourSymbols'][1]
-        day['afternoon'] = content['dayIntervals'][i]['sixHourSymbols'][2]
-        day['evening'] = content['dayIntervals'][i]['sixHourSymbols'][3]
-        day['tempMin'] = content['dayIntervals'][i]['temperature']['min']
-        day['tempMax'] = content['dayIntervals'][i]['temperature']['max']
-        day['windMin'] = content['dayIntervals'][i]['wind']['min']
-        day['windMax'] = content['dayIntervals'][i]['wind']['max']
-        day['precipitation'] = content['dayIntervals'][i]['precipitation']['value']
-        dayIntervals.append(day)
-    return dayInterval
+@login_required   
+def deleteRecord(request,id):
+    cities = City.objects.filter(user=request.user)
+    city = cities.filter(cityId = id)
+    city.delete()
+    return redirect('daily')
