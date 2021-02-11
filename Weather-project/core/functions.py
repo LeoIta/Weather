@@ -28,9 +28,24 @@ def cleanCondition(str):
 def hour(timezone):
     time = pytz.timezone(timezone)
     currentTime = datetime.now(time)
-    timezone = timezone.replace('_',' ')
-    hour = currentTime.strftime('%H:%M %Z') + ' (' + timezone + ')'
+    hour = currentTime.strftime('%H:%M %Z %z')
     return hour
+
+def getDaily(id):
+    links = 'https://www.yr.no/api/v0/locations/' + id + '/forecast'
+    web = requests.get(links)
+    content = json.loads(web.text)
+    daily = []
+    for i in range(9):
+        day = {}
+        start =(content['dayIntervals'][i]['start'])[:10]
+        if i==0:
+            day['data'] = datetime.strptime(start, '%Y-%m-%d').strftime('Today, %b. %d')
+        else:
+            day['data'] = datetime.strptime(start, '%Y-%m-%d').strftime('%A, %b. %d')
+        day['daySymbol'] = content['dayIntervals'][i]['twentyFourHourSymbol']
+        daily.append(day)
+    return daily
 
 def getCurrent(city):
     weather = {}
@@ -50,6 +65,7 @@ def getCurrent(city):
     weather['precipitation']= content["precipitation"]["value"]
     weather['conditionSymbol']= content["symbolCode"]["next1Hour"]
     weather['condition'] = cleanCondition(content["symbolCode"]["next1Hour"])
+    weather['daily'] = getDaily(city.cityId)
 
     return weather
 

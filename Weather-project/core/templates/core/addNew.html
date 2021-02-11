@@ -19,27 +19,20 @@ style=
     {%endfor %}
     <ul><a href="">None of the above</a></ul>
 {% else %}
-<div class="col-md-5"
-style=
-    "display: inline-block;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 200px;
-    height: 100px;
-    margin: auto;">
+<div class="row justify-content-center mt-5">
+    <div class="col-md-7 text-center">
     <form method="POST" style="size: 500px;">
         {% csrf_token %}
         <strong>{{ error }}</strong> 
 <br><br>
-        Search your city
+        <p><h4>What do you want to find</h4></p>
         {{ form.cityName }}
-        <button class="button is-info">Add to my cities</button>
+        <br><button class="btn btn-success" style="width: 197px;">Search city to add</button>
     </form> 
-
+    <a class="btn btn-primary" href="{% url 'current' %}" style="width: 197px;">Go to your cities</a>
+</div>
+</div>
 {% endif %}
 
-</div>
+</class=>
 {% endblock %}

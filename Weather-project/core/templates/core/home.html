@@ -2,13 +2,18 @@
 
 {% block content %}
 
+
 <div class="row justify-content-center mt-5">
         <div class="col-md-7 text-center">
 
             <h1>Your Weather Application</h1>
             <p>Do you like to travel? Check the weather wherever you want to go!!</p>
+            {% if user.is_authenticated %}
+        <a role="button" class="btn btn-primary btn-lg" href="{% url 'cities' %}">Start</a>
+            {% else %}
         <a role="button" class="btn btn-primary btn-lg" href="{% url 'signUpUser' %}">Start</a>
-        </div>
+        {% endif %}
+    </div>
     </div>
 
 {% endblock %}

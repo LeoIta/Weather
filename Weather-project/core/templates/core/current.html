@@ -5,31 +5,67 @@
 <div class="card-columns">
     {% for weather in weather_data %}
     <ul>
-    <div class="card" style="width: 35rem;">
-        
-        <div class="card-body">
-            <class="card-title" style="align-items: center">{{ weather.name }}, {{ weather.country }}
-            &emsp;<img
-            src="https://flagcdn.com/w20/{{ weather.code }}.png"
-            srcset="https://flagcdn.com/w40/{{ weather.code }}.png 2x"
-            width="20"></h5>
-            &emsp; {{ weather.hour }}
+        <div class="row align-items-start">
+            <div class="col-6">
+                <div class="card" style="width: 35rem; border-radius: 25px">                    
+                    <div class="card-body">
+                        <class="card-title" style="align-items: center">{{ weather.name }}, {{ weather.country }}
+                        &emsp;<img
+                        src="https://flagcdn.com/w20/{{ weather.code }}.png"
+                        srcset="https://flagcdn.com/w40/{{ weather.code }}.png 2x"
+                        width="20"></h5>
+                        &emsp; {{ weather.hour }}
 
-            <hr>
-            <class="card-text">
-            <img src="../../static/core/{{ weather.conditionSymbol}}.png" height="30px"> {{weather.condition}}
-            &emsp;<img src="../../static/core/term.png" height="30px"> {{weather.temp}} 
-            &emsp;Feels like: {{weather.feel}}
-            &emsp;<img src="../../static/core/prec.png" height="25px"> {{weather.precipitation}}mm</p>
-            <p class="card-text"><img src="../../static/core/wind.png" height="30px"> {{weather.wind}}</p>
+                        <hr>
+                        <class="card-text">
+                        <img src="../../static/core/{{ weather.conditionSymbol}}.png" height="30px"> {{weather.condition}}
+                        &emsp;<img src="../../static/core/term.png" height="30px"> {{weather.temp}} 
+                        &emsp;Feels like: {{weather.feel}}
+                        &emsp;<img src="../../static/core/prec.png" height="25px"> {{weather.precipitation}}mm</p>
+                        <p class="card-text"><img src="../../static/core/wind.png" height="30px"> {{weather.wind}}</p>
 
-            <div class="card-footer bg-transparent border-dark">
-                &emsp;<a href="weekly"  class="btn btn-primary">weekly view</a>
-                &emsp;<a href="{{weather.link}}"  target= "_blank" class="btn btn-info">more details</a>
-                &emsp;<a href="delete/{{weather.id}}"  class="btn btn-danger">remove city</a>
+                        <div class="card-footer bg-transparent border-dark">
+                            &emsp;<a href="weekly"  class="btn btn-primary" 
+                            style= "border-radius:25px;" >weekly view</a>
+                            &emsp;<a href="{{weather.link}}"  target= "_blank" class="btn btn-info" 
+                            style= "border-radius:25px;">more details</a>
+                            &emsp;<a href="delete/{{weather.id}}"  class="btn btn-danger" 
+                            style= "border-radius:25px;">remove city</a>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+            <div class="col-3" 
+            style="
+                border-color: rgb(242, 250, 250);
+                border-style: solid;
+                border-radius: 100px;
+                border-width: 1px;
+                padding-top: 5px;
+                padding-right: 15px;
+                padding-bottom: 5px;
+                padding-left: 10px;"
+                >
+                <div id="carousel" class="carousel slide" data-bs-ride="carousel" data-bs-pause="false">
+                    <div class="carousel-inner">
+                        {% for daily in weather.daily %}
+                            {% if forloop.first %} 
+                        <div class="carousel-item active">
+                            {% else %}
+                        <div class="carousel-item">
+                            {% endif %}
+                            &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;{{daily.data}}
+                            <hr>
+                            &emsp;&emsp;&emsp;
+                            <a href="{% url 'weekly' %}">
+                                <img src="../../static/core/{{daily.daySymbol}}.png" height="180px" width="180px">
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
     </ul>
     {% endfor %}
 </div>

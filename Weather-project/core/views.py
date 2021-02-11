@@ -72,6 +72,8 @@ def validateInDB(request,id):
     web = requests.get(linkJson)
     location = json.loads(web.text)
     newcity = City()
+    name =  location["name"]
+
     newcity.cityName = location["name"]
     newcity.country = location["country"]["name"]
     newcity.countryId = location["country"]["id"] #short like PL for Poland
