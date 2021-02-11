@@ -21,15 +21,20 @@ style=
 {% else %}
 <div class="row justify-content-center mt-5">
     <div class="col-md-7 text-center">
+    <a class="btn btn-primary" href="{% url 'current' %}">Go to your cities</a>
     <form method="POST" style="size: 500px;">
         {% csrf_token %}
-        <strong>{{ error }}</strong> 
-<br><br>
-        <p><h4>What do you want to find</h4></p>
+        <p><h4>What do you want to find?</h4></p>
         {{ form.cityName }}
-        <br><button class="btn btn-success" style="width: 197px;">Search city to add</button>
+        <button class="btn btn-success">Search city to add</button>
     </form> 
-    <a class="btn btn-primary" href="{% url 'current' %}" style="width: 197px;">Go to your cities</a>
+      {% if error %}
+    <span style="color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;">
+        {{ error }}!
+    </span>
+    {% endif %}
 </div>
 </div>
 {% endif %}

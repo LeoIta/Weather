@@ -41,9 +41,9 @@
                 border-style: solid;
                 border-radius: 100px;
                 border-width: 1px;
-                padding-top: 5px;
-                padding-right: 15px;
-                padding-bottom: 5px;
+                padding-top: 10px;
+                padding-right: 12px;
+                padding-bottom: 10px;
                 padding-left: 10px;"
                 >
                 <div id="carousel" class="carousel slide" data-bs-ride="carousel" data-bs-pause="false">
@@ -55,7 +55,7 @@
                         <div class="carousel-item">
                             {% endif %}
                             &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;{{daily.data}}
-                            <hr>
+                            <br>
                             &emsp;&emsp;&emsp;
                             <a href="{% url 'weekly' %}">
                                 <img src="../../static/core/{{daily.daySymbol}}.png" height="180px" width="180px">
