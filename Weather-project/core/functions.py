@@ -50,10 +50,12 @@ def getDaily(id):
 def getCurrent(city):
     weather = {}
     weather['link'] = 'https://www.yr.no/en/forecast/daily-table/' + city.cityId + '/' + city.urlPath
-    weather['id']=city.cityId
-    weather['name']= city.cityName
-    weather['country']= city.country
-    weather['code']= (city.countryId).lower()
+    weather['id'] = city.cityId
+    weather['name'] = city.cityName
+    weather['country'] = city.country
+    weather['nameENG'] = city.cityNameENG
+    weather['countryENG'] = city.countryENG
+    weather['code'] = (city.countryId).lower()
     weather['hour'] = hour(city.timezone)
 
     link = 'https://www.yr.no/api/v0/locations/' + city.cityId + '/forecast/currenthour'

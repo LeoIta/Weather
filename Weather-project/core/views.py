@@ -55,9 +55,11 @@ def current(request):
 
 @login_required
 def apiValidation(request):
+    print('I am in apivalidation')
     error = ''
     city_list = []
     if request.method == 'POST':
+        print('I am in POST apivalidation')
         form = CityForm(request.POST)
         newcity = form.save(commit=False)
         city_name = newcity.cityName
@@ -68,22 +70,30 @@ def apiValidation(request):
 
 @login_required
 def validateInDB(request,id):
-    linkJson = "https://www.yr.no/api/v0/locations/" + id
+    newcity = City()
+    newcity.cityId = id
+    linkJson = 'https://www.yr.no/api/v0/locations/' + id
     web = requests.get(linkJson)
     location = json.loads(web.text)
-    newcity = City()
-    name =  location["name"]
-
-    newcity.cityName = location["name"]
-    newcity.country = location["country"]["name"]
-    newcity.countryId = location["country"]["id"] #short like PL for Poland
-    newcity.cityId = location["id"]
-    newcity.urlPath = location["urlPath"]
-    newcity.timezone = location["timeZone"]
+    newcity.country = location['country']['name']
+    newcity.cityName = location['name'] 
+    name =  location['name']
+    
+    linkJson = 'https://www.yr.no/api/v0/locations/suggest?language=en&q=' + location['name']
+    web = requests.get(linkJson)
+    jsonfile = json.loads(web.text)
+    locations = jsonfile['_embedded']['location']
+    for location in locations:
+        if location['id']==id:
+            newcity.cityNameENG = location['name']
+            newcity.countryENG = location['country']['name']
+            newcity.countryId = location['country']['id']
+            newcity.urlPath = location['urlPath']
+            newcity.timezone = location['timeZone']
     try:
-        newcity.region = location["region"]["name"]
+        newcity.region = location['region']['name']
     except:
-        newcity.region = '' 
+        newcity.region = ''
     newcity.user = request.user
     try:
         newcity.save()
