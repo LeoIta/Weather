@@ -12,12 +12,28 @@
                         <class="card-title" style="align-items: center;">
                         <div class = "col-8" 
                         style="background-color: rgb(231, 235, 250);padding-bottom: 2px;padding-left: 5px;">
-                            {{ weather.nameENG }}, {{ weather.countryENG }}
+                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="some info">        
+                            {{ weather.name }}, {{ weather.country }}
                         &emsp;<img 
                         src="https://flagcdn.com/w20/{{ weather.code }}.png"
                         srcset="https://flagcdn.com/w40/{{ weather.code }}.png 2x"
                         width="20"></h5>
                         &emsp; {{ weather.hour }}
+                            </span></div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="detail" style="position: relative;">
+                            <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title">Native language name</h5>
+                                <button type="button" class="btn-close"data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                I am the best
+                                </div>
+                            </div>
+                            </div>
                         </div>
                         <hr>
                         <class="card-text">

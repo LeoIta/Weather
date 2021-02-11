@@ -53,8 +53,6 @@ def getCurrent(city):
     weather['id'] = city.cityId
     weather['name'] = city.cityName
     weather['country'] = city.country
-    weather['nameENG'] = city.cityNameENG
-    weather['countryENG'] = city.countryENG
     weather['code'] = (city.countryId).lower()
     weather['hour'] = hour(city.timezone)
 

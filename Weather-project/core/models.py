@@ -1,12 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 class City(models.Model):
-    cityNameENG = models.CharField(max_length=85)
     cityName = models.CharField(max_length=85)
     #longest city in the word has 85 characthers
     cityId = models.CharField(max_length=25)
     country = models.CharField(max_length=50)
-    countryENG = models.CharField(max_length=50)
     #longest country in the word has 50 characthers
     countryId = models.CharField(max_length=25)
     urlPath = models.CharField(max_length=250)
