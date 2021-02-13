@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-from .functions import getWind,cleanCondition,hour,getCurrent,findCityOptions,dayIntervals
+from .functions import getWind,cleanCondition,hour,getCurrent,findCityOptions,dayIntervals,view9day
 
 def home(request):
     return render(request, 'core/home.html')
@@ -99,12 +99,10 @@ def validateInDB(request,id):
 
 @login_required
 def weekly(request):
-    cities = City.objects.filter(user=request.user)
-    weather_data = []
-    for city in cities:
-        weather = getCurrent(city)
-        weather_data.append(weather)
-    return render(request, 'core/current.html', {'weather_data' : weather_data})
+    city = City.objects.filter(user=request.user,id=id)
+    weather = view9day(id)
+    return render(request, 'core/longperiod.html', {'weather' : weather})
+
 
 @login_required   
 def deleteRecord(request,id):

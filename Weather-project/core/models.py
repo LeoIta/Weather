@@ -14,7 +14,7 @@ class City(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self): #show the actual city name
-        return (self.cityNameENG + " - " + self.countryId)
+        return (self.cityName + " - " + self.countryId)
 
     class Meta: #show the plural of city as cities instead of citys
         verbose_name_plural = 'cities'
