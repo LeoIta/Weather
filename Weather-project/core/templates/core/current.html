@@ -44,11 +44,9 @@
                         <p class="card-text"><img src="../../static/core/wind.png" height="30px"> {{weather.wind}}</p>
 
                         <div class="card-footer bg-transparent border-dark">
-                            &emsp;<a href="weekly"  class="btn btn-primary" 
+                            &emsp;<a href="{% url 'weekly' %}"  class="btn btn-primary col-5" 
                             style= "border-radius:25px;" >weekly view</a>
-                            &emsp;<a href="{{weather.link}}"  target= "_blank" class="btn btn-info" 
-                            style= "border-radius:25px;">more details</a>
-                            &emsp;<a href="delete/{{weather.id}}"  class="btn btn-danger" 
+                            &emsp;<a href="delete/{{weather.id}}"  class="btn btn-danger col-5" 
                             style= "border-radius:25px;">remove city</a>
                         </div>
                     </div>

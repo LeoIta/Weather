@@ -69,8 +69,8 @@ def getCurrent(city):
 
     return weather
 
-def view9day(id):
-    link ='https://www.yr.no/api/v0/locations/' + id + '/forecast'
+def view9day(city):
+    link ='https://www.yr.no/api/v0/locations/' + city.cityId + '/forecast'
     web = requests.get(link)
     content = json.loads(web.text)['dayIntervals']
     view9day = []
@@ -81,39 +81,40 @@ def view9day(id):
             day['date'] = datetime.strptime(start, '%Y-%m-%d').strftime('Today, %b. %d')
         else:
             day['date'] = datetime.strptime(start, '%Y-%m-%d').strftime('%A, %b. %d')
-        day['daySymbol'] = content[i]['SixHourSymbol']#list 4 elements
-        minTemp = content[i]['temperature']['min']
-        maxTemp = content[i]['temperature']['max']
+        day['daySymbols'] = content[i]['sixHourSymbols']
+        minTemp = str(content[i]['temperature']['min'])
+        maxTemp = str(content[i]['temperature']['max'])
         day['temperature'] = minTemp + '° / ' + maxTemp + '°'
-        precipitation = content[i]['precipitation']['value']
-        day['precipitation'] = precipitation
+        precipitation = str(content[i]['precipitation']['value'])
+        day['precipitation'] = precipitation + 'mm'
+        day['name'] = city.cityName
         view9day.append(day)
     return view9day
 
-def get1h(id):
-    link ='https://www.yr.no/api/v0/locations/' + id + '/forecast'
-    web = requests.get(link)
-    content = json.loads(web.text)['shortIntervals']
-    view24H = []
-    for i in range(24):
-        day = {}
-        start = str(content[i]['start'][:10])
-        day['time'] = str(content[i]['start'][11:13])
-        if i==0:
-            day['date'] = datetime.strptime(start, '%Y-%m-%d').strftime('Today, %b. %d')
-        else:
-            day['date'] = datetime.strptime(start, '%Y-%m-%d').strftime('%A, %b. %d')
-        day['weather'] = content['symbolCode']['next1Hour']
-        day['temp'] = content ['temperature']['value']
-        day['humidity'] = str(content['humidity']['value']) + '%'
-        day['precipitation'] = str(content['precipitation']['value']) + 'mm'
-        day['wind'] = str(content ['wind']['speed']) + '°'
+# def get1h(id):
+#     link ='https://www.yr.no/api/v0/locations/' + id + '/forecast'
+#     web = requests.get(link)
+#     content = json.loads(web.text)['shortIntervals']
+#     view24H = []
+#     for i in range(24):
+#         day = {}
+#         start = str(content[i]['start'][:10])
+#         day['time'] = str(content[i]['start'][11:13])
+#         if i==0:
+#             day['date'] = datetime.strptime(start, '%Y-%m-%d').strftime('Today, %b. %d')
+#         else:
+#             day['date'] = datetime.strptime(start, '%Y-%m-%d').strftime('%A, %b. %d')
+#         day['weather'] = content['symbolCode']['next1Hour']
+#         day['temp'] = content ['temperature']['value']
+#         day['humidity'] = str(content['humidity']['value']) + '%'
+#         day['precipitation'] = str(content['precipitation']['value']) + 'mm'
+#         day['wind'] = str(content ['wind']['speed']) + '°'
         
-        view24H.append(day)
-        minTemp = content['dayIntervals'][i]['temperature']['min']
-        maxTemp = content['dayIntervals'][i]['temperature']['max']
-        day['temperature'] = minTemp + '° / ' + maxTemp + '°' 
-    return view24H
+#         view24H.append(day)
+#         minTemp = content['dayIntervals'][i]['temperature']['min']
+#         maxTemp = content['dayIntervals'][i]['temperature']['max']
+#         day['temperature'] = minTemp + '° / ' + maxTemp + '°' 
+#     return view24H
 
 def findCityOptions(newcity):
     linkJson = 'https://www.yr.no/api/v0/locations/suggest?language=en&q=' + newcity

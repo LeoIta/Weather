@@ -1,27 +1,74 @@
 {% extends "core/base.html" %}
 {% block content %}
 <br>
-    
-<div class="card-rows">
-    {% for day in weather %}
-    <ul>
-    <div class="card" style="width: 30rem;">
-        
-        <div class="card-body">
-            <class="card-title" style="align-items: center">{{ day.date }}
-            <class="card-text">
-            <img src="../../static/core/{{day.daySymbol}}.png" height="30px"> 
-            &emsp;{{day.temperature}}
-            &emsp;{{day.precipitation}}</p>
-            <p class="card-text">{{day.wind}}</p>
 
-            <div class="card-footer bg-transparent border-dark">
-                &emsp;<a href="{'url 'current.html'}"  target= "_blank" class="btn btn-primary">current view</a>
+    <a href="{% url 'current' %}"  class="btn btn-primary">go to current view</a>
+    <br><br>
+    <div id="carousel" class="carousel slide" data-bs-ride="carousel" data-bs-touch= false>
+        <div class="carousel-inner">
+            {% for days in weather_data %}
+            <style>
+                .card{
+                    background-color:lightcyan;
+                    align-items: center;
+                }
+                .card-header{
+                    border:0px;
+                }
+                .card-text-row{
+                    border-left: 0px;
+                    border-right: 0px;
+                    
+                }
+            </style>
+            {% if forloop.first %} 
+                <div class="carousel-item active">
+            {% else %}
+                <div class="carousel-item">
+            {% endif %}
+            <div class="card-group">
+                <div class="card text-dark bg-info mb-3 card-header">
+                    <div class="card-body"><h6>{{days.0.name}}</h6></div>
+                </div>
+                {% for header in headers %}
+                <div class="card card-header">
+                    <div class="card-body">{{header}}</div>
+                </div>
+                {% endfor %}
             </div>
+            
+            {% for day in days %}
+            <div class="card-group">
+                <div class="card card-text-row" style="align-items: flex-start;">
+                    <div class="card-body">
+                        <p class="card-text">{{day.date}}</p>
+                    </div>
+                </div>
+
+                {% for symbol in day.daySymbols %}
+                <div class="card card-text-row">
+                    <div class="card-body">   
+                        {% if symbol %}
+                        <img src="../../static/core/{{symbol}}.png" height="30px">
+                        {% endif %}
+                    
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="card card-text-row">
+                    <div class="card-body">
+                        <p class="card-text">{{day.temperature}}</p>
+                    </div>
+                </div>
+                <div class="card card-text-row">
+                    <div class="card-body">
+                        <p class="card-text">{{day.precipitation}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+            {% endfor %}
         </div>
     </div>
-    </ul>
-    {% endfor %}
-</div>
-
 {% endblock %}

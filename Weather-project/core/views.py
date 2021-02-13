@@ -97,12 +97,14 @@ def validateInDB(request,id):
     except IntegrityError:
         return redirect('current')
 
-@login_required
 def weekly(request):
-    city = City.objects.filter(user=request.user,id=id)
-    weather = view9day(id)
-    return render(request, 'core/longperiod.html', {'weather' : weather})
-
+    cities = City.objects.filter(user=request.user)
+    weather_data = []
+    headers = ['Night','Morning','Afternoon','Evening','Min\/max temp.','Precip.']
+    for city in cities:
+        weather = view9day(city)
+        weather_data.append(weather)
+    return render(request, 'core/longperiod.html', {'weather_data' : weather_data, 'headers': headers })
 
 @login_required   
 def deleteRecord(request,id):
