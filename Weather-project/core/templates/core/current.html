@@ -12,7 +12,6 @@
                         <class="card-title" style="align-items: center;">
                         <div class = "col-8" 
                         style="background-color: rgb(231, 235, 250);padding-bottom: 2px;padding-left: 5px;">
-                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="some info">        
                             {{ weather.name }}, {{ weather.country }}
                         &emsp;<img 
                         src="https://flagcdn.com/w20/{{ weather.code }}.png"
@@ -44,7 +43,7 @@
                         <p class="card-text"><img src="../../static/core/wind.png" height="30px"> {{weather.wind}}</p>
 
                         <div class="card-footer bg-transparent border-dark">
-                            &emsp;<a href="{% url 'weekly' %}"  class="btn btn-primary col-5" 
+                            &emsp;<a href="{% url 'weekly' %}/{{weather.id}}"  class="btn btn-primary col-5" 
                             style= "border-radius:25px;" >weekly view</a>
                             &emsp;<a href="delete/{{weather.id}}"  class="btn btn-danger col-5" 
                             style= "border-radius:25px;">remove city</a>
@@ -75,7 +74,7 @@
                             &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;{{daily.data}}
                             <br>
                             &emsp;&emsp;&emsp;
-                            <a href="{% url 'weekly' %}">
+                            <a href="{% url 'weekly' %}/{{weather.id}}">
                                 <img src="../../static/core/{{daily.daySymbol}}.png" height="180px" width="180px">
                             </a>
                         </div>

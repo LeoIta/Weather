@@ -10,6 +10,7 @@ path('login/', views.loginUser, name='loginUser'),
 path('logout/', views.logoutUser, name='logoutUser'),
 
 path('current/', views.current, name= 'current'),
+path('weekly/<str:id>', views.longperiod, name= 'longperiod'),
 path('weekly', views.weekly, name= 'weekly'),
 path('cities/', views.apiValidation, name= 'cities'),
 path('cities/<str:id>', views.validateInDB, name= 'validateInDB'),
