@@ -100,7 +100,7 @@ def validateInDB(request,id):
 @login_required
 def longperiod(request,id):
     city = City.objects.get(user=request.user,cityId=id)
-    headers = [city.cityName,'Night','Morning','Afternoon','Evening','Min\/max temp.','Precip.']
+    headers = [city.cityName,'Night','Morning','Afternoon','Evening','Min/max temp.','Precip.']
     weather = view9day(city)
     return render(request, 'core/longperiod.html', {'weather' : weather, 'headers': headers })
 
@@ -108,7 +108,7 @@ def longperiod(request,id):
 def weekly(request):
     cities = City.objects.filter(user=request.user)
     weather_data = []
-    headers = ['Night','Morning','Afternoon','Evening','Min\/max temp.','Precip.']
+    headers = ['Night','Morning','Afternoon','Evening','Min/max temp.','Precip.']
     for city in cities:
         weather = view9day(city)
         weather_data.append(weather)
