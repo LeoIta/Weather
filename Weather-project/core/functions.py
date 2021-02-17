@@ -82,9 +82,13 @@ def view9day(city):
         else:
             day['date'] = datetime.strptime(start, '%Y-%m-%d').strftime('%A, %b. %d')
         day['daySymbols'] = content[i]['sixHourSymbols']
-        minTemp = str(content[i]['temperature']['min'])
-        maxTemp = str(content[i]['temperature']['max'])
-        day['temperature'] = minTemp + '° / ' + maxTemp + '°'
+        try:
+            minTemp = str(content[i]['temperature']['min'])
+            maxTemp = str(content[i]['temperature']['max'])
+            day['temperature'] = minTemp + '° / ' + maxTemp + '°'
+        except:
+            day['temperature'] = ''
+            pass
         precipitation = str(content[i]['precipitation']['value'])
         day['precipitation'] = precipitation + 'mm'
         day['name'] = city.cityName
