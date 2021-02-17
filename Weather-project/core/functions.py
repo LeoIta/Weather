@@ -91,31 +91,6 @@ def view9day(city):
         view9day.append(day)
     return view9day
 
-# def get1h(id):
-#     link ='https://www.yr.no/api/v0/locations/' + id + '/forecast'
-#     web = requests.get(link)
-#     content = json.loads(web.text)['shortIntervals']
-#     view24H = []
-#     for i in range(24):
-#         day = {}
-#         start = str(content[i]['start'][:10])
-#         day['time'] = str(content[i]['start'][11:13])
-#         if i==0:
-#             day['date'] = datetime.strptime(start, '%Y-%m-%d').strftime('Today, %b. %d')
-#         else:
-#             day['date'] = datetime.strptime(start, '%Y-%m-%d').strftime('%A, %b. %d')
-#         day['weather'] = content['symbolCode']['next1Hour']
-#         day['temp'] = content ['temperature']['value']
-#         day['humidity'] = str(content['humidity']['value']) + '%'
-#         day['precipitation'] = str(content['precipitation']['value']) + 'mm'
-#         day['wind'] = str(content ['wind']['speed']) + '°'
-        
-#         view24H.append(day)
-#         minTemp = content['dayIntervals'][i]['temperature']['min']
-#         maxTemp = content['dayIntervals'][i]['temperature']['max']
-#         day['temperature'] = minTemp + '° / ' + maxTemp + '°' 
-#     return view24H
-
 def findCityOptions(newcity):
     linkJson = 'https://www.yr.no/api/v0/locations/suggest?language=en&q=' + newcity
     web = requests.get(linkJson)
