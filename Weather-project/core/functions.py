@@ -43,7 +43,10 @@ def getDaily(id):
             day['data'] = datetime.strptime(start, '%Y-%m-%d').strftime('Today, %b. %d')
         else:
             day['data'] = datetime.strptime(start, '%Y-%m-%d').strftime('%A, %b. %d')
-        day['daySymbol'] = content['dayIntervals'][i]['twentyFourHourSymbol']
+        try:
+            day['daySymbol'] = content['dayIntervals'][i]['twentyFourHourSymbol']
+        except:
+            day['daySymbol']=''
         daily.append(day)
     return daily
 
@@ -81,7 +84,10 @@ def view9day(city):
             day['date'] = datetime.strptime(start, '%Y-%m-%d').strftime('Today, %b. %d')
         else:
             day['date'] = datetime.strptime(start, '%Y-%m-%d').strftime('%A, %b. %d')
-        day['daySymbols'] = content[i]['sixHourSymbols']
+        try:
+            day['daySymbols'] = content[i]['sixHourSymbols']
+        except:
+            day['daySymbols'] = ''
         try:
             minTemp = str(content[i]['temperature']['min'])
             maxTemp = str(content[i]['temperature']['max'])

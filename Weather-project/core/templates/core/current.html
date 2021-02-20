@@ -66,7 +66,7 @@
                 <div id="carousel" class="carousel slide" data-bs-ride="carousel" data-bs-pause="false">
                     <div class="carousel-inner">
                         {% for daily in weather.daily %}
-                            {% if forloop.first %} 
+                            {% if forloop.first %}
                         <div class="carousel-item active">
                             {% else %}
                         <div class="carousel-item">
@@ -75,7 +75,9 @@
                             <br>
                             &emsp;&emsp;&emsp;
                             <a href="{% url 'weekly' %}/{{weather.id}}">
+                                {%if daily.daySymbol %}
                                 <img src="../../static/core/{{daily.daySymbol}}.png" height="180px" width="180px">
+                                {% endif %}
                             </a>
                         </div>
                         {% endfor %}
