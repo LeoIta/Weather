@@ -1,4 +1,4 @@
-# Weather-SQL
+# Weather
 
 Project build using Django.
 
